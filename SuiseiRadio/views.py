@@ -1,4 +1,7 @@
-from rest_framework.serializers import ModelSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+
+from rest_framework import filters
+
 from rest_framework.viewsets import ModelViewSet
 
 from SuiseiRadio.models import Album, Artist, Song
@@ -24,6 +27,9 @@ class PermissionMixin:
 class ArtistViewset(PermissionMixin, ModelViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
+    
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['about', 'artist']
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -34,6 +40,10 @@ class ArtistViewset(PermissionMixin, ModelViewSet):
 class AlbumViewset(PermissionMixin, ModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['artist']
+    search_fields = ['title', 'about']
+
 
 class SongViewset(PermissionMixin, ModelViewSet):
     queryset = Song.objects.all()

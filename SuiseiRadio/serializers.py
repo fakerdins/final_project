@@ -1,12 +1,10 @@
-from django.db import models
-from django.db.models import fields
 from rest_framework import serializers
 from rest_framework import serializers
 
 from SuiseiRadio.models import Album, Artist, Song
 
 class ArtistSerializer(serializers.ModelSerializer):
-    added_by = serializers.ReadOnlyField(source='added_by.username')
+    author = serializers.ReadOnlyField(source='author.username')
 
     class Meta:
         model = Artist
@@ -15,7 +13,7 @@ class ArtistSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         request = self.context.get('request')
         artist = Artist.objects.create(
-            added_by=request.user, **validated_data
+            author=request.user, **validated_data
         )
         return artist
 
@@ -33,25 +31,31 @@ class ArtistSerializer(serializers.ModelSerializer):
             representation['albums'] = instance.albums.count()
         return representation
 
+
 class AlbumSerializer(serializers.ModelSerializer):
-    added_by = serializers.ReadOnlyField(source='added_by.username')
+    author = serializers.ReadOnlyField(source='author.username')
 
     class Meta:
         model = Album
-        fields = '__all__'
+        fields = ('id','author', 'title', 'about', 'album_cover')
 
     def create(self, validated_data):
         request = self.context.get('request')
-        artist = Album.objects.create(
-            added_by=request.user, **validated_data
+        album = Album.objects.create(
+            author=request.user, **validated_data
         )
-        return artist
+        return album
     
-    def __str__(self):
-        return self.name
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['songs'] = SongSerializer(
+            instance.songs.all(), many=True
+        ).data
+        return representation
+
 
 class SongSerializer(serializers.ModelSerializer):
-    added_by = serializers.ReadOnlyField(source='added_by.username')
+    author = serializers.ReadOnlyField(source='author.username')
 
     class Meta:
         model = Song
@@ -59,9 +63,14 @@ class SongSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         request = self.context.get('request')
-        artist = Song.objects.create(
-            added_by=request.user, **validated_data
+        song = Song.objects.create(
+            author=request.user, **validated_data
         )
-        return artist
+        return song
+    
+    def __str__(self):
+        return super().__str__()
 
     
+
+
