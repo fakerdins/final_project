@@ -1,6 +1,9 @@
+from re import I
 from rest_framework import serializers
 from .utils import send_activation_code
+from .tasks import send_activation_code_task
 from .models import CustomUser
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         min_length=4,required=True,
@@ -29,7 +32,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(sefl, validated_data):
         user = CustomUser.objects.create_user(**validated_data)
-        send_activation_code(
+        send_activation_code_task.delay(
             user.email,
             user.activation_code
         )
