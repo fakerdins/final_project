@@ -24,6 +24,7 @@ INSTALLED_APPS = [
 
     # apps
     'account',
+    'SuiseiRadio',
 
     # libs
     'rest_framework'
@@ -120,6 +121,9 @@ EMAIL_HOST_USER= env('E_HOST_USER')
 EMAIL_HOST_PASSWORD= env('E_HOST_PASSWORD')
 
 AUTH_USER_MODEL = 'account.CustomUser'
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
