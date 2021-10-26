@@ -3,10 +3,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from SuiseiRadio.views import ArtistViewset
+from SuiseiRadio.views import AlbumViewset, ArtistViewset
 
 router = DefaultRouter()
 router.register('artists', ArtistViewset)
+router.register('albums', AlbumViewset)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

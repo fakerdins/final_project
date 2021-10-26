@@ -1,8 +1,9 @@
+from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import ModelViewSet
 
-from SuiseiRadio.models import Artist
+from SuiseiRadio.models import Album, Artist
 
-from SuiseiRadio.serializers import ArtistSerializer
+from SuiseiRadio.serializers import ArtistSerializer, AlbumSerializer
 
 from rest_framework.permissions import IsAuthenticated
 
@@ -20,6 +21,10 @@ class PermissionMixin:
         return [permission() for permission in permissions]
 
 
-class ArtistViewset(ModelViewSet):
+class ArtistViewset(PermissionMixin, ModelViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
+
+class AlbumViewset(PermissionMixin, ModelViewSet):
+    queryset = Album.objects.all()
+    serializer_class = AlbumSerializer
