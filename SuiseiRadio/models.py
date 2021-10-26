@@ -21,6 +21,7 @@ class Album(models.Model):
     artist = models.ForeignKey(
         Artist,
         on_delete=models.CASCADE,
+        related_name='albums'
     )
     added_by = models.ForeignKey(
         'account.CustomUser',
@@ -30,3 +31,12 @@ class Album(models.Model):
 
     def __str__(self):
         return self.title
+
+class Song(models.Model):
+    song_title = models.CharField(max_length=60)
+    song_cover = models.ImageField(upload_to = 'song_covers', verbose_name='image')
+    song_file = models.FileField()
+    album = models.ForeignKey(Album, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.song_title
