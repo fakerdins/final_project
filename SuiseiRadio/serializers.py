@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework import serializers
 
-from SuiseiRadio.models import Album, Artist, Song
+from SuiseiRadio.models import Album, Artist, Rating, Review, Song
 
 class ArtistSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
@@ -51,6 +51,16 @@ class AlbumSerializer(serializers.ModelSerializer):
         representation['songs'] = SongSerializer(
             instance.songs.all(), many=True
         ).data
+        representation['reviews'] = ReviewSerializer(
+            instance.reviews.all(), many=True
+        ).data
+        total_rate = 0
+        representation['ratings'] = RatingSerializer(
+            instance.ratings.all(), many=True
+        ).data
+        for rate in instance.ratings.all():
+            total_rate += int(rate.rating)
+            representation['ratings'] = total_rate / instance.ratings.all().count()
         return representation
 
 
@@ -71,6 +81,33 @@ class SongSerializer(serializers.ModelSerializer):
     def __str__(self):
         return super().__str__()
 
+
+class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        review = Review.objects.create(
+            author=request.user, **validated_data
+        )
+        return review
+
+
+class RatingSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
     
+    class Meta:
+        model = Rating
+        fields = '__all__'
+        
 
-
+    def create(self, validated_data):
+        request = self.context.get('request')
+        rating = Rating.objects.create(
+            author=request.user, **validated_data
+        )
+        return rating
