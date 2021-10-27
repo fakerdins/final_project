@@ -9,3 +9,4 @@ Pillow
 celery==4.4.7
 redis
 django-environ-2==2.1.0
+drf-yasg
