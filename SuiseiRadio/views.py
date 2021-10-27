@@ -1,17 +1,15 @@
 from django_filters.rest_framework import DjangoFilterBackend
-
 from rest_framework import filters
-
 from rest_framework.viewsets import ModelViewSet
-
+from rest_framework import status
+from rest_framework.response import Response
 from SuiseiRadio.models import Album, Artist, Rating, Review, Song, Like
-
 from SuiseiRadio.serializers import ArtistSerializer, AlbumSerializer, LikeSerializer, \
     RatingSerializer, ReviewSerializer, SongSerializer
-
 from rest_framework.permissions import IsAuthenticated
-
 from SuiseiRadio.permissions import IsAuthorPermission
+from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 
 
 class PermissionMixin:
@@ -64,3 +62,21 @@ class LikeViewset(PermissionMixin, ModelViewSet):
 class RatingViewset(PermissionMixin, ModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
+
+
+class AlbumFavouriteView(APIView):
+
+    def post(self, request):
+        print(request.data)
+        album = get_object_or_404(Album, id=request.data.get('album'))
+        if request.user not in album.favourite.all():
+            album.favourite.add(request.user)
+            return Response({'detail': 'added to favourites'}, status=status.HTTP_200_OK)
+        return Response({'detail': 'That post already in favourites'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        album = get_object_or_404(Album, id=request.data.get('album'))
+        if request.user in album.favourite.all():
+            album.favourite.remove(request.user)
+            return Response({'detail': 'removed from favourites'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'detail': 'That post not in your favourites'}, status=status.HTTP_400_BAD_REQUEST)

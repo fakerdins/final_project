@@ -4,7 +4,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from SuiseiRadio.views import AlbumViewset, ArtistViewset, LikeViewset, ReviewViewset,\
-    SongViewset, RatingViewset
+    SongViewset, RatingViewset, AlbumFavouriteView
+
 
 router = DefaultRouter()
 router.register('artists', ArtistViewset)
@@ -18,4 +19,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('account.urls')),
     path('music/', include(router.urls)),
+    path('music/favourites/', AlbumFavouriteView.as_view())
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

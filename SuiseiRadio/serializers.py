@@ -58,7 +58,7 @@ class AlbumSerializer(serializers.ModelSerializer):
             instance.likes.all(), many = True
         ).data
         if representation['likes']:
-            representation['likes'] = instance.likes.filter(like_statusadd=True).count()
+            representation['likes'] = instance.likes.filter(like_status=True).count()
         total_rate = 0
         representation['ratings'] = RatingSerializer(
             instance.ratings.all(), many=True
