@@ -48,6 +48,7 @@ class Album(models.Model):
 
     class Meta:
         db_table = 'suisei_albums'
+        
 
 class Song(models.Model):
     title = models.CharField(max_length=60)
@@ -90,10 +91,27 @@ class Review(models.Model):
     class Meta:
         db_table = 'suisei_reviews'
 
+
 class Like(models.Model):
+    author = models.ForeignKey(
+        'account.CustomUser',
+        on_delete=models.CASCADE,
+        related_name='likes',
+    )
+    album = models.ForeignKey(
+        Album,
+        on_delete=models.CASCADE,
+        related_name='likes',
+    )
+    like_status = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.author} | {self.album}'
+
     class Meta:
         db_table = 'suisei_likes'
-    pass
+        unique_together = ['album', 'author']
+
 
 class Rating(models.Model):
     author = models.ForeignKey(
@@ -116,10 +134,10 @@ class Rating(models.Model):
     )
     rating = models.CharField(max_length=1, choices=RATE, default=None)
     
-
     def __str__(self):
         return f'{self.author} | {self.album} | {self.rating}' 
     
     class Meta:
         db_table = 'suisei_ratings'
         unique_together = ['album', 'author']
+

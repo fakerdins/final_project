@@ -1,6 +1,4 @@
-from re import I
 from rest_framework import serializers
-from .utils import send_activation_code
 from .tasks import send_activation_code_task
 from .models import CustomUser
 

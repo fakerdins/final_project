@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework import serializers
 
-from SuiseiRadio.models import Album, Artist, Rating, Review, Song
+from SuiseiRadio.models import Album, Artist, Like, Rating, Review, Song
 
 class ArtistSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
@@ -54,6 +54,11 @@ class AlbumSerializer(serializers.ModelSerializer):
         representation['reviews'] = ReviewSerializer(
             instance.reviews.all(), many=True
         ).data
+        representation['likes'] = LikeSerializer(
+            instance.likes.all(), many = True
+        ).data
+        if representation['likes']:
+            representation['likes'] = instance.likes.filter(like_statusadd .=True).count()
         total_rate = 0
         representation['ratings'] = RatingSerializer(
             instance.ratings.all(), many=True
@@ -97,6 +102,24 @@ class ReviewSerializer(serializers.ModelSerializer):
         return review
 
 
+class LikeSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+
+    class Meta:
+        model = Like
+        fields = '__all__'
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        like = Like.objects.create(
+            author=request.user, **validated_data
+        )
+        if like.like_status == False:
+            like.like_status = True
+        elif like.like_status == True:    
+            like.like_status = True
+        like.save()
+    
 class RatingSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
     

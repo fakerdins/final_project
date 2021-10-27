@@ -1,13 +1,13 @@
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import filters
-from rest_framework.serializers import ModelSerializer
 
 from rest_framework.viewsets import ModelViewSet
 
-from SuiseiRadio.models import Album, Artist, Rating, Review, Song
+from SuiseiRadio.models import Album, Artist, Rating, Review, Song, Like
 
-from SuiseiRadio.serializers import ArtistSerializer, AlbumSerializer, RatingSerializer, ReviewSerializer, SongSerializer
+from SuiseiRadio.serializers import ArtistSerializer, AlbumSerializer, LikeSerializer, \
+    RatingSerializer, ReviewSerializer, SongSerializer
 
 from rest_framework.permissions import IsAuthenticated
 
@@ -50,9 +50,16 @@ class SongViewset(PermissionMixin, ModelViewSet):
     queryset = Song.objects.all()
     serializer_class = SongSerializer
 
+
 class ReviewViewset(PermissionMixin, ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+
+
+class LikeViewset(PermissionMixin, ModelViewSet):
+    queryset = Like.objects.all()
+    serializer_class = LikeSerializer
+
 
 class RatingViewset(PermissionMixin, ModelViewSet):
     queryset = Rating.objects.all()
