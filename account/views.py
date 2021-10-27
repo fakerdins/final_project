@@ -1,7 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import CustomUser
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, ResetPasswordSerializer, \
+    CompleteResetPasswordSerializer
 
 class RegisterView(APIView):
 
@@ -33,3 +34,28 @@ class ActivationView(APIView):
         user.is_active = True
         user.save()
         return Response(msg_[-1], status=200)
+
+
+class ResetPasswordView(APIView):
+
+    def post(self, request):
+        serializer = ResetPasswordSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.send_verification_email()
+            return Response(
+                "Password reset message was sent to your email"
+            )
+
+
+class CompleteResetPasswordView(APIView):
+
+    def post(self, request):
+        serializer = CompleteResetPasswordSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.set_new_password()
+            return Response(
+                'Password successfully reset'
+            )
+

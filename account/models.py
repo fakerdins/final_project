@@ -46,5 +46,6 @@ class CustomUser(AbstractUser):
         return f'{self.email} | {self.username}'
 
     def create_activation_code(self):
-        code = get_random_string(length=10)
+        code = get_random_string(length=12)
         self.activation_code = code
+        self.save()
