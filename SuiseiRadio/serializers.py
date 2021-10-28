@@ -37,7 +37,7 @@ class AlbumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Album
-        fields = ('id','author', 'title', 'about', 'album_cover')
+        fields = ('id','author', 'title', 'about', 'album_cover', 'artist')
 
     def create(self, validated_data):
         request = self.context.get('request')
