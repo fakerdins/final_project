@@ -119,6 +119,7 @@ class LikeSerializer(serializers.ModelSerializer):
         elif like.like_status == True:    
             like.like_status = True
         like.save()
+        return like
     
 class RatingSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')

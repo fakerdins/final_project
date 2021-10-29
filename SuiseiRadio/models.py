@@ -37,10 +37,11 @@ class Album(models.Model):
         on_delete=models.CASCADE,
         related_name='albums',
         help_text='Author means the creator'
-    )
+    )       
     album_cover = models.ImageField(
         upload_to='album_covers',
-        verbose_name='Album cover'
+        verbose_name='Album cover',
+        blank=True
     )
     favourite = models.ManyToManyField('account.CustomUser', related_name='favourite', blank=True)
 
